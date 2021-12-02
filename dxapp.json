@@ -1,0 +1,111 @@
+{
+	"name": "tso500_output_parser_v1.0",
+	"title": "tso500_output_parser_v1.0",
+	"summary": "Parse the output of the TSO500 app and set off jobs",
+	"tags": [
+	],
+	"properties": {
+	"github release": "v1.0"
+	},
+	"dxapi": "1.0.0",
+	"inputSpec": [
+	{
+	"name": "project_name",
+	"label": "project_name",
+	"help": "the name of the TSO500 project in format 002_YYMMDD...",
+	"class": "string"
+	},
+	{
+	"name": "project_id",
+	"label": "project_id",
+	"help": "the id of the TSO500 project in formnat project-abc",
+	"class": "string"
+	},
+	{
+	"name": "tso500_jobid",
+	"label": "tso500_jobid",
+	"help": "the id of the job running the TSO500 app in format job-123",
+	"class": "string"
+	},
+	{
+	"name": "coverage_bedfile_id",
+	"label": "coverage_bedfile_id",
+	"help": "the id of the BED file used for sambamba project-abc:file123",
+	"class": "string"
+	},
+	{
+	"name": "coverage_app_id",
+	"label": "coverage_app_id",
+	"help": "the id of the chanjo applet in format project-abc:applet123",
+	"class": "string"
+	},
+	{
+	"name": "fastqc_app_id",
+	"label": "fastqc_app_id",
+	"help": "the id of the fastqc applet in format project-abc:applet123",
+	"class": "string"
+	},
+	{
+	"name": "multiqc_app_id",
+	"label": "multiqc_app_id",
+	"help": "the id of the multiqc applet in format project-abc:applet123",
+	"class": "string"
+	},
+	{
+	"name": "coverage_commands",
+	"label": "coverage_commands",
+	"help": "extra arguments for the sambamba app eg additional sambamba filters or flags ",
+	"class": "string",
+	"optional": true
+	},
+	{
+	"name": "coverage_level",
+	"label": "coverage_level",
+	"help": "value for sambamba coverage",
+	"class": "string",
+	"optional": false
+	},
+	{
+	"name": "multiqc_coverage_level",
+	"label": "multiqc_coverage_level",
+	"help": "value for multiqc coverage",
+	"class": "string",
+	"optional": false
+	}
+  ],
+  "outputSpec": [
+	{
+	  "name": "logfiles",
+	  "label": "logfiles",
+	  "help": "log and dx run commands files",
+	  "class": "array:file",
+	  "optional": true
+	}
+  ],
+  "runSpec": {
+	"execDepends": [
+	],
+	"distribution" : "Ubuntu",
+	"release":"16.04",
+	"version": "0",
+	"file": "src/code.sh",
+	"interpreter": "bash",
+	"assetDepends": [
+	]
+  },
+  "access": {
+	"allProjects":"UPLOAD",
+	"network": [
+	  "*"
+	]
+  },
+  "regionalOptions": {
+	"aws:us-east-1": {
+	  "systemRequirements": {
+		"main": {
+		  "instanceType": "mem1_ssd1_v2_x2"
+		}
+	  }
+	}
+  }
+}
