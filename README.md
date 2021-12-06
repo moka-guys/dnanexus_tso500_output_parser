@@ -1,4 +1,4 @@
-# tso500_output_parser_v1.0
+# tso500_output_parser_v1.1
 
 ## What does this app do?
 This app takes a jobid from the TSO500 docker app and sets off additional dx run commands including fastqc, coverage calculations and multiqc.
@@ -14,6 +14,7 @@ This app runs after the the applet TSO500app_v1.1. It is used to set off QC step
 * coverage_app_id - the id of the coverage app used in format project-abc:applet123
 * fastqc_app_id - the id of the fastqc app used in format project-abc:applet123
 * multiqc_app_id - the id of the multiqc app used in format project-abc:applet123
+* upload_multiqc_app_id - the id of the upload_multiqc app used in format project-abc:applet123
 * coverage_commands - any extra commands for coverage (eg -iadditional_sambamba_flags and -iadditional_filter_commands)
 * coverage_level - the required read depth to be used for the coverage calculation (string)
 * multiqc_coverage_level - the required read depth to be used in multiQC (string)
