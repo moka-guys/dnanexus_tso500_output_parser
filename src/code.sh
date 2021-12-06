@@ -81,7 +81,11 @@ for bai in $bai_array
 # create dx run command for multiqc - giving depends on list, echo it to file and execute
 multiqc_cmd="dx run $multiqc_app_id --detach -y --brief $depends_list -iproject_for_multiqc=$project_name -icoverage_level=$multiqc_coverage_level --dest=$project_id:/ --auth-token $API_KEY" 
 echo $multiqc_cmd >> /home/dnanexus/out/logfiles/logfiles/$project_name.dx_run_cmds.sh
-$multiqc_cmd
+jobid=$($multiqc_cmd)
+# upload multiqc report
+upload_multiqc_cmd="dx run $upload_multiqc_app_id -y  -imultiqc_html=$jobid:multiqc_report -imultiqc_data_input=$jobid:multiqc --project=$project_id --brief --auth-token $API_KEY" 
+echo upload_multiqc_cmd >> /home/dnanexus/out/logfiles/logfiles/$project_name.dx_run_cmds.sh
+$upload_multiqc_cmd
 # cat the dx run cmds so can be viewed in logfile in dnanexus
 cat /home/dnanexus/out/logfiles/logfiles/$project_name.dx_run_cmds.sh
 
