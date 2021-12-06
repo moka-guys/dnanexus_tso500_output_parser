@@ -84,7 +84,7 @@ echo $multiqc_cmd >> /home/dnanexus/out/logfiles/logfiles/$project_name.dx_run_c
 jobid=$($multiqc_cmd)
 # upload multiqc report
 upload_multiqc_cmd="dx run $upload_multiqc_app_id -y  -imultiqc_html=$jobid:multiqc_report -imultiqc_data_input=$jobid:multiqc --project=$project_id --brief --auth-token $API_KEY" 
-echo upload_multiqc_cmd >> /home/dnanexus/out/logfiles/logfiles/$project_name.dx_run_cmds.sh
+echo $upload_multiqc_cmd >> /home/dnanexus/out/logfiles/logfiles/$project_name.dx_run_cmds.sh
 $upload_multiqc_cmd
 # cat the dx run cmds so can be viewed in logfile in dnanexus
 cat /home/dnanexus/out/logfiles/logfiles/$project_name.dx_run_cmds.sh
