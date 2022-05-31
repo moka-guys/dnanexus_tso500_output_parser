@@ -4,13 +4,15 @@
 set -e -x -o pipefail
 
 # make output folder
-mkdir -p /home/dnanexus/out/logfiles/logfiles/
+mkdir -p /home/dnanexus/out/logfiles/logfiles/ /home/dnanexus/out/vcf_index/vcf_index
+#install tabix (needed for indexing the vcfs)
+#sudo apt-get install tabix
 
 # Store the API key. Grants the script access to DNAnexus resources    
 API_KEY=$(dx cat project-FQqXfYQ0Z0gqx7XG9Z2b4K43:mokaguys_nexus_auth_key)
 
 # print the arguments to the app to the logfile
-printf "projectname $project_name\nprojectid $project_id\ntso500_jobid $tso500_jobid\ncoverage_bedfile_id $coverage_bedfile_id\ncoverage_app_id $coverage_app_id\nfastqc_app_id $fastqc_app_id\nmultiqc_app_id $multiqc_app_id\n" >> /home/dnanexus/out/logfiles/logfiles/$project_name.output_parser.log
+printf "projectname $project_name\nprojectid $project_id\ntso500_jobid $tso500_jobid\ncoverage_bedfile_id $coverage_bedfile_id\ncoverage_app_id $coverage_app_id\nfastqc_app_id $fastqc_app_id\nsompy_app_id $sompy_app_id\nmultiqc_app_id $multiqc_app_id\n" >> /home/dnanexus/out/logfiles/logfiles/$project_name.output_parser.log
 
 #Add a cautionary note to the dx_run_cmds.sh
 printf "#note whilst these are the dx run commands used this script does not capture the jobids required to delay the multiqc app\n" >> /home/dnanexus/out/logfiles/logfiles/$project_name.dx_run_cmds.sh
@@ -77,6 +79,45 @@ for bai in $bai_array
         # run the command
         $dx_run_cmd
     done 
+
+### run sompy on HD200 sample if present
+printf "\nVCFs to be searched for HD200 sample and sompy run if present\nVCF indexes created at this stage\n" >> /home/dnanexus/out/logfiles/logfiles/$project_name.output_parser.log
+# create a array of results vcf names
+# parse the dx describe output for all outputs in the results_vcfs output
+# collapse the jsob for each output into a single line, filter for genome.vcf (the merged small variants vcf file) and return the file names
+vcfs_array=$(dx describe --json --multi $tso500_jobid:results_vcfs | jq -c '.[]'  | grep genome.vcf)
+#loop through vcfs to find control and build dx run command for sompy
+for genome_vcf in $vcfs_array
+    do 
+        # for each input (a json) return the id field and filename
+        fileid=$(jq -r '.id' <<< $genome_vcf)
+        filename=$(jq -r '.name' <<< $genome_vcf)
+        
+        if [[ "$filename" =~ .*"HD200".* ]]; 
+            then
+            # build sompy command using the provided appid
+            sompy_command="dx run $sompy_app_id  --detach -y --brief --name=$filename -itruthVCF=project-ByfFPz00jy1fk6PjpZ95F27J:file-G7g9Pfj0jy1f87k1J1qqX83X -iqueryVCF=$fileid -iTSO=true -iskip=false --dest=$project_name:/ --auth-token $API_KEY" 
+            # write cmd to file and to stdout
+            echo $sompy_command
+            echo "jobid=($sompy_command)" >> /home/dnanexus/out/logfiles/logfiles/$project_name.dx_run_cmds.sh
+            #execute the command and capture jobid to delay multiqc
+            jobid=$($sompy_command)
+            depends_list="${depends_list} -d ${jobid}"
+        fi
+
+        # create indexed vcfs
+        # use project and file ids to download the vcf
+        projectid=$(jq -r '.project' <<<$genome_vcf)
+        vcf_id=$projectid:$fileid
+        dx download $vcf_id
+        # create path for bgzipped vcf
+        echo "creating indexed vcf for file name $filename file ID $vcf_id"
+        gzip_vcf_path=/home/dnanexus/out/vcf_index/vcf_index/$filename.gz
+        bgzip -c $filename > $gzip_vcf_path
+        cd /home/dnanexus/out/vcf_index/vcf_index
+        tabix -p vcf $filename.gz
+        cd ~
+    done
 
 # create dx run command for multiqc - giving depends on list, echo it to file and execute
 multiqc_cmd="dx run $multiqc_app_id --detach -y --brief $depends_list -iproject_for_multiqc=$project_name -icoverage_level=$multiqc_coverage_level --dest=$project_id:/ --auth-token $API_KEY" 

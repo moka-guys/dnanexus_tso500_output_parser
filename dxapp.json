@@ -1,11 +1,11 @@
 {
-	"name": "tso500_output_parser_v1.1",
-	"title": "tso500_output_parser_v1.1",
+	"name": "tso500_output_parser_v2.0",
+	"title": "tso500_output_parser_v2.0",
 	"summary": "Parse the output of the TSO500 app and set off jobs",
 	"tags": [
 	],
 	"properties": {
-	"github release": "v1.1"
+	"github release": "v2.0"
 	},
 	"dxapi": "1.0.0",
 	"inputSpec": [
@@ -43,6 +43,12 @@
 	"name": "fastqc_app_id",
 	"label": "fastqc_app_id",
 	"help": "the id of the fastqc applet in format project-abc:applet123",
+	"class": "string"
+	},
+	{
+	"name": "sompy_app_id",
+	"label": "sompy_app_id",
+	"help": "the id of the sompy applet in format project-abc:applet123",
 	"class": "string"
 	},
 	{
@@ -86,13 +92,24 @@
 	  "help": "log and dx run commands files",
 	  "class": "array:file",
 	  "optional": true
+	},
+	{
+		"name": "vcf_index",
+		"label": "indexed vcfs",
+		"help": "Indexed vcf files (vcf.gz + vcf.gz.tbi)",
+		"class": "array:file",
+		"optional": true
 	}
   ],
   "runSpec": {
 	"execDepends": [
+		{
+			"name": "tabix",
+			"version": "1.10.2-3"
+		}
 	],
 	"distribution" : "Ubuntu",
-	"release":"16.04",
+	"release":"20.04",
 	"version": "0",
 	"file": "src/code.sh",
 	"interpreter": "bash",
