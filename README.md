@@ -1,4 +1,4 @@
-# tso500_output_parser_v1.2
+# tso500_output_parser_v1.2.0
 
 ## What does this app do?
 This app takes a jobid from the TSO500 docker app and sets off additional dx run commands including fastqc, coverage calculations, sompy (for HD200 commercial control samples) and multiqc.
