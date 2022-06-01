@@ -111,15 +111,20 @@ for genome_vcf in $vcfs_array
         dx download $vcf_id
         # create path for bgzipped vcf
         echo "creating indexed vcf for file name $filename file ID $vcf_id"
-        # get path for vcf to put gzipped vcf and
+        # get path for vcf to put gzipped vcf- taking the folder where the vcf is located from the json output from dx describe above. filefolder format ~=/analysis_folder/Results/*sample_ID*
+        # this allows the bgzipped vcf and index to be put in the correct sample folder in analysis_folder/Results
         filefolder=$(jq -r '.folder' <<< $genome_vcf)
-        #gzip_vcf_path=/home/dnanexus/out/vcf_index/vcf_index/$filename.gz
+        # create output folder for bgzipped vcf and index
         gzip_vcf_path=$vcf_index_output$filefolder
         mkdir -p $gzip_vcf_path
+        # bgzip the vcf and output the .vcf.gz file to the sample folder in Results
         gzip_vcf=$gzip_vcf_path/$filename.gz
         bgzip -c $filename > $gzip_vcf
+        # move in to the sample folder (where the bgzipped file is saved)
         cd $gzip_vcf_path
+        # index the vcf.gz file with tabix
         tabix -p vcf $gzip_vcf
+        # move back to /home/dnanexus
         cd ~
     done
 

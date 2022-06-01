@@ -4,7 +4,7 @@
 This app takes a jobid from the TSO500 docker app and sets off additional dx run commands including fastqc, coverage calculations, sompy (for HD200 commercial control samples) and multiqc.
 
 ## What are typical use cases for this app?
-This app runs after the the applet TSO500app_v1.1. It is used to set off QC steps for specific files output by this job using existing applets (which are set up to process one file at a time)
+This app runs after the the applet TSO500app_v1.3. It is used to set off QC steps for specific files output by this job using existing applets (which are set up to process one file at a time)
 
 ## What inputs are required for this app to run?
 * project_name - human readable DNANexus project name (eg 002_YYMMDD...) in which to set off the dx run commands
@@ -29,6 +29,8 @@ The fastqc app is run for each fastq.gz file in the output and the jobid from th
 The sambamba_chanjo coverage app is run for each pair of bam/bai files in the bams_for_coverage output.
 
 The sompy app is run for an sample with "HD200" in the sample name, comparing it with the HD200 known variants to generate recall statistics.
+
+The "MergedSmallVariants.genome.vcf" is zipped with bgzip and indexed with tabix. These files are saved in the sample folder in analysis_folder/Results. Indexing the vcf allows it to be viewed in the igv web app.
 
 Finally a dx run command for MultiQC is built, as the fastqc jobids used in the --depends-on flag to delay the start until all fastqc jobs have finished sucessfully.
 
