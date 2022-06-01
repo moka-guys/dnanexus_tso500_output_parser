@@ -4,9 +4,8 @@
 set -e -x -o pipefail
 
 # make output folder
-mkdir -p /home/dnanexus/out/logfiles/logfiles/ /home/dnanexus/out/vcf_index/vcf_index
-#install tabix (needed for indexing the vcfs)
-#sudo apt-get install tabix
+mkdir -p /home/dnanexus/out/logfiles/logfiles/ /home/dnanexus/out/vcf_index/
+vcf_index_output=/home/dnanexus/out/vcf_index
 
 # Store the API key. Grants the script access to DNAnexus resources    
 API_KEY=$(dx cat project-FQqXfYQ0Z0gqx7XG9Z2b4K43:mokaguys_nexus_auth_key)
@@ -112,10 +111,15 @@ for genome_vcf in $vcfs_array
         dx download $vcf_id
         # create path for bgzipped vcf
         echo "creating indexed vcf for file name $filename file ID $vcf_id"
-        gzip_vcf_path=/home/dnanexus/out/vcf_index/vcf_index/$filename.gz
-        bgzip -c $filename > $gzip_vcf_path
-        cd /home/dnanexus/out/vcf_index/vcf_index
-        tabix -p vcf $filename.gz
+        # get path for vcf to put gzipped vcf and
+        filefolder=$(jq -r '.folder' <<< $genome_vcf)
+        #gzip_vcf_path=/home/dnanexus/out/vcf_index/vcf_index/$filename.gz
+        gzip_vcf_path=$vcf_index_output$filefolder
+        mkdir -p $gzip_vcf_path
+        gzip_vcf=$gzip_vcf_path/$filename.gz
+        bgzip -c $filename > $gzip_vcf
+        cd $gzip_vcf_path
+        tabix -p vcf $gzip_vcf
         cd ~
     done
 

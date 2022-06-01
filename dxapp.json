@@ -1,11 +1,11 @@
 {
-	"name": "tso500_output_parser_v2.0",
-	"title": "tso500_output_parser_v2.0",
+	"name": "tso500_output_parser_v1.2.0",
+	"title": "tso500_output_parser_v1.2.0",
 	"summary": "Parse the output of the TSO500 app and set off jobs",
 	"tags": [
 	],
 	"properties": {
-	"github release": "v2.0"
+	"github release": "v1.2.0"
 	},
 	"dxapi": "1.0.0",
 	"inputSpec": [
@@ -96,7 +96,7 @@
 	{
 		"name": "vcf_index",
 		"label": "indexed vcfs",
-		"help": "Indexed vcf files (vcf.gz + vcf.gz.tbi)",
+		"help": "Indexed vcf files (vcf.gz + vcf.gz.tbi) output to analysis_folder/Results",
 		"class": "array:file",
 		"optional": true
 	}
