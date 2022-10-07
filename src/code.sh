@@ -69,10 +69,12 @@ for bai in $bai_array
         bamfile_name=$(echo $bai | sed 's/.bai//')
         # repeat dx describe command, and grep for the bamfile name to get the bamfile id, adding quotations to ensure we don't also return the bamindexes in grep
         bam_id=$(dx describe --json --multi $tso500_jobid:bams_for_coverage | jq -c '.[]'  | grep $bamfile_name\"| jq -r '.id')
+        # get the pannumber
+        pannumber=$(echo $bamfile_name | grep -o -E "Pan[0-9]{1,5}")
         # record the filename and fileids for the bam and bam index
         printf "\nbamfile name: $bamfile_name bamindex name $bai bamid $bam_id bai_id $bai_id\n" >> /home/dnanexus/out/logfiles/logfiles/$project_name.output_parser.log
         # create dx run command, using the inputs
-        dx_run_cmd="dx run $coverage_app_id --detach -y --brief --name=$bamfile_name -ibam_index=$bai_id -ibamfile=$bam_id -icoverage_level=$coverage_level -isambamba_bed=$coverage_bedfile_id $coverage_commands --dest=$project_id:/ --auth-token $API_KEY"
+        dx_run_cmd="dx run $coverage_app_id --detach -y --brief --name=$bamfile_name -ibam_index=$bai_id -ibamfile=$bam_id -icoverage_level=$coverage_level -isambamba_bed=$coverage_bedfile_id $coverage_commands --dest=$project_id:/coverage/$pannumber --auth-token $API_KEY"
         # copy the dx run command to the dx_run_cmds.sh
         echo $dx_run_cmd >> /home/dnanexus/out/logfiles/logfiles/$project_name.dx_run_cmds.sh
         # run the command

@@ -1,10 +1,10 @@
-# tso500_output_parser_v1.2.0
+# tso500_output_parser_v1.2.1
 
 ## What does this app do?
 This app takes a jobid from the TSO500 docker app and sets off additional dx run commands including fastqc, coverage calculations, sompy (for HD200 commercial control samples) and multiqc.
 
 ## What are typical use cases for this app?
-This app runs after the the applet TSO500app_v1.3. It is used to set off QC steps for specific files output by this job using existing applets (which are set up to process one file at a time)
+This app runs after the the applet TSO500_v1.3+. It is used to set off QC steps for specific files output by this job using existing applets (which are set up to process one file at a time)
 
 ## What inputs are required for this app to run?
 * project_name - human readable DNANexus project name (eg 002_YYMMDD...) in which to set off the dx run commands
