@@ -1,11 +1,11 @@
 {
-	"name": "tso500_output_parser_v1.2.0",
-	"title": "tso500_output_parser_v1.2.0",
+	"name": "tso500_output_parser_v1.2.1",
+	"title": "tso500_output_parser_v1.2.1",
 	"summary": "Parse the output of the TSO500 app and set off jobs",
 	"tags": [
 	],
 	"properties": {
-	"github release": "v1.2.0"
+	"github release": "v1.2.1"
 	},
 	"dxapi": "1.0.0",
 	"inputSpec": [
